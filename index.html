@@ -349,16 +349,17 @@
   </div>
 
 <script>
-const CORRECT_PASSWORD = "1234t6789";
+const CORRECT_PASSWORD = "load";
 
 function checkPassword() {
   const input = document.getElementById('passwordInput').value;
   const errorDiv = document.getElementById('lockError');
-  if (input === CORRECT_PASSWORD) {
+  if (input === CORRECT_PASSWORD ) {
+    localStorage.setItem('usdtCalcUnlocked', 'true'); // remember this device
     document.getElementById('lockScreen').classList.add('hidden');
     document.getElementById('disclaimerModal').classList.remove('hidden');
   } else {
-    errorDiv.textContent = 'Incorrect password. Try again.';
+    errorDiv.textContent = 'Incorrect password or PIN. Try again.';
     document.getElementById('passwordInput').value = '';
   }
 }
@@ -368,8 +369,13 @@ function acknowledgeDisclaimer() {
   document.getElementById('calcCard').classList.remove('hidden');
 }
 
-document.getElementById('passwordInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') checkPassword();
+// Check on page load — skip password if already unlocked before
+window.addEventListener('DOMContentLoaded', () => {
+  if (localStorage.getItem('usdtCalcUnlocked') === 'true') {
+    document.getElementById('lockScreen').classList.add('hidden');
+    document.getElementById('calcCard').classList.remove('hidden');
+    // disclaimer skipped on repeat visits too — remove the next 2 lines if you want it every time
+  }
 });
 
 // Build watermark layer
